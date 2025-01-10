@@ -4,71 +4,37 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 
-# Hack pq o GitHub não deixa colocar aquivos com mais de 100 MB
-"""
-from io import StringIO
-
-string_candidatos = ""
-with open('consulta_cand_2024_BRASIL.csv.part1', 'r') as arquivo:
-    string_candidatos += arquivo.read()
-with open('consulta_cand_2024_BRASIL.csv.part2', 'r') as arquivo:
-    string_candidatos += arquivo.read()
-with open('consulta_cand_2024_BRASIL.csv.part3', 'r') as arquivo:
-    string_candidatos += arquivo.read()
-
-string_bens = ""
-with open('bem_candidato_BRASIL.csv.part1', 'r') as arquivo:
-    string_bens += arquivo.read()
-with open('bem_candidato_BRASIL.csv.part2', 'r') as arquivo:
-    string_bens += arquivo.read()
-with open('bem_candidato_BRASIL.csv.part3', 'r') as arquivo:
-    string_bens += arquivo.read()
-"""
-
-
 # Importando os dados
+# Carregar os arquivos de uma vez
+dados_candidatos_partes = [
+    pd.read_csv(f'consulta_cand_2024_BRASIL.csv.part{i}', delimiter=';', encoding='latin1') 
+    for i in range(1, 9)
+]
+
+# Concatenar os arquivos
+dados_candidatos = pd.concat(dados_candidatos_partes, ignore_index=True)
+
+# Para dados de bens
+dados_bens_partes = [
+    pd.read_csv(f'bem_candidato_2024_BRASIL.csv.part{i}', delimiter=';', encoding='latin1')
+    for i in range(1, 9)
+]
+
+# Concatenar os arquivos
+dados_bens = pd.concat(dados_bens_partes, ignore_index=True)
+
+# Para dados de redes sociais
+dados_redes_partes = [
+    pd.read_csv(f'rede_social_candidato_BRASIL.csv.part{i}', delimiter=';', encoding='latin1')
+    for i in range(1, 4)  # Se houver apenas 3 partes
+]
+
+# Concatenar os arquivos
+dados_redes = pd.concat(dados_redes_partes, ignore_index=True)
+
 #dados_candidatos = pd.read_csv('consulta_cand_2024_BRASIL.csv', delimiter=';', encoding='latin1')
-#dados_candidatos = pd.read_csv(StringIO(string_candidatos), delimiter=';', encoding='latin1')
-dados_candidatos_part1 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part1', delimiter=';', encoding='latin1')
-dados_candidatos_part2 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part2', delimiter=';', encoding='latin1')
-dados_candidatos_part3 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part3', delimiter=';', encoding='latin1')
-dados_candidatos_part4 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part4', delimiter=';', encoding='latin1')
-dados_candidatos_part5 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part5', delimiter=';', encoding='latin1')
-dados_candidatos_part6 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part6', delimiter=';', encoding='latin1')
-dados_candidatos_part7 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part7', delimiter=';', encoding='latin1')
-dados_candidatos_part8 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part8', delimiter=';', encoding='latin1')
-dados_candidatos = pd.merge(dados_candidatos_part1, dados_candidatos_part2, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part3, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part4, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part5, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part6, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part7, how='outer')
-dados_candidatos = pd.merge(dados_candidatos, dados_candidatos_part8, how='outer')
-
 #dados_bens = pd.read_csv('bem_candidato_2024_BRASIL.csv', delimiter=';', encoding='latin1')
-#dados_bens = pd.read_csv(StringIO(string_bens), delimiter=';', encoding='latin1')
-dados_bens_part1 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part1', delimiter=';', encoding='latin1')
-dados_bens_part2 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part2', delimiter=';', encoding='latin1')
-dados_bens_part3 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part3', delimiter=';', encoding='latin1')
-dados_bens_part4 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part4', delimiter=';', encoding='latin1')
-dados_bens_part5 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part5', delimiter=';', encoding='latin1')
-dados_bens_part6 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part6', delimiter=';', encoding='latin1')
-dados_bens_part7 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part7', delimiter=';', encoding='latin1')
-dados_bens_part8 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part8', delimiter=';', encoding='latin1')
-dados_bens = pd.merge(dados_bens_part1, dados_bens_part2, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part3, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part4, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part5, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part6, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part7, how='outer')
-dados_bens = pd.merge(dados_bens, dados_bens_part8, how='outer')
-
 #dados_redes = pd.read_csv('rede_social_candidato_2024_BRASIL.csv', delimiter=';', encoding='latin1')
-dados_redes_part1 = pd.read_csv('rede_social_candidato_BRASIL.csv.part1', delimiter=';', encoding='latin1')
-dados_redes_part2 = pd.read_csv('rede_social_candidato_BRASIL.csv.part2', delimiter=';', encoding='latin1')
-dados_redes_part3 = pd.read_csv('rede_social_candidato_BRASIL.csv.part3', delimiter=';', encoding='latin1')
-dados_redes = pd.merge(dados_redes_part1, dados_redes_part2, how='outer')
-dados_redes = pd.merge(dados_redes, dados_redes_part3, how='outer')
 
 
 def exibir_tabelas(base_escolhida):
