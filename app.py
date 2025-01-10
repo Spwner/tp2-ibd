@@ -25,7 +25,7 @@ dados_bens = pd.concat(dados_bens_partes, ignore_index=True)
 
 # Para dados de redes sociais
 dados_redes_partes = [
-    pd.read_csv(f'rede_social_candidato_2024_BRASIL_{i:02d}.csv', delimiter=';', encoding='latin1')
+    pd.read_csv(f'rede_social_candidato_2024_BRASIL_{i}.csv', delimiter=';', encoding='latin1')
     for i in range(1, 3)
 ]
 
