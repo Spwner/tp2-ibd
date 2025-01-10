@@ -242,8 +242,8 @@ def gerar_grafico_pizza(dados, estado=None, municipio= None):
     ax.set_title("Distribuição de Candidatos por Genero")
     st.pyplot(fig)
 # Título da página
-st.title('Trabalho Pratico: Introducação a Banco de Dados - Candidatos-2024 ')
-st.write('Atividade Extra do Trabalho Pratico')
+st.title('Trabalho Prático 2: Candidatos - 2024')
+st.write('Atividade extra do Trabalho Prático')
 
 
 
