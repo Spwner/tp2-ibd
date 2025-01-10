@@ -5,6 +5,7 @@ import streamlit as st
 
 
 # Hack pq o GitHub não deixa colocar aquivos com mais de 100 MB
+"""
 from io import StringIO
 
 string_candidatos = ""
@@ -22,13 +23,22 @@ with open('bem_candidato_BRASIL.csv.part2', 'r') as arquivo:
     string_bens += arquivo.read()
 with open('bem_candidato_BRASIL.csv.part3', 'r') as arquivo:
     string_bens += arquivo.read()
+"""
 
 
 # Importando os dados
 #dados_candidatos = pd.read_csv('consulta_cand_2024_BRASIL.csv', delimiter=';', encoding='latin1')
-dados_candidatos = pd.read_csv(StringIO(string_candidatos), delimiter=';', encoding='latin1')
+#dados_candidatos = pd.read_csv(StringIO(string_candidatos), delimiter=';', encoding='latin1')
+dados_candidatos_part1 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part1', delimiter=';', encoding='latin1')
+dados_candidatos_part2 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part2', delimiter=';', encoding='latin1')
+dados_candidatos_part3 = pd.read_csv('consulta_cand_2024_BRASIL.csv.part3', delimiter=';', encoding='latin1')
+dados_candidatos = pd.merge(pd.merge(dados_candidatos_part1, dados_candidatos_part2, how='outer'), dados_candidatos_part3, how='outer')
 #dados_bens = pd.read_csv('bem_candidato_2024_BRASIL.csv', delimiter=';', encoding='latin1')
-dados_candidatos = pd.read_csv(StringIO(string_bens), delimiter=';', encoding='latin1')
+#dados_bens = pd.read_csv(StringIO(string_bens), delimiter=';', encoding='latin1')
+dados_bens_part1 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part1', delimiter=';', encoding='latin1')
+dados_bens_part2 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part2', delimiter=';', encoding='latin1')
+dados_bens_part3 = pd.read_csv('bem_candidato_2024_BRASIL.csv.part3', delimiter=';', encoding='latin1')
+dados_bens = pd.merge(pd.merge(dados_bens_part1, dados_bens_part2, how='outer'), dados_bens_part3, how='outer')
 dados_redes = pd.read_csv('rede_social_candidato_2024_BRASIL.csv', delimiter=';', encoding='latin1')
 
 def exibir_tabelas(base_escolhida):
