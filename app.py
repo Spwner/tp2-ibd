@@ -7,7 +7,7 @@ import streamlit as st
 # Importando os dados
 # Carregar os arquivos de uma vez
 dados_candidatos_partes = [
-    pd.read_csv(f'consulta_cand_2024_BRASIL.csv.part{i}', delimiter=';', encoding='latin1') 
+    pd.read_csv(f'consulta_cand_2024_BRASIL.csv.part{i:03d}', delimiter=';', encoding='latin1') 
     for i in range(1, 25)
 ]
 
@@ -16,7 +16,7 @@ dados_candidatos = pd.concat(dados_candidatos_partes, ignore_index=True)
 
 # Para dados de bens
 dados_bens_partes = [
-    pd.read_csv(f'bem_candidato_2024_BRASIL.csv.part{i}', delimiter=';', encoding='latin1')
+    pd.read_csv(f'bem_candidato_2024_BRASIL.csv.part{i:03d}', delimiter=';', encoding='latin1')
     for i in range(1, 25)
 ]
 
