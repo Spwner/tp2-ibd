@@ -41,7 +41,7 @@ def exibir_tabelas(base_escolhida):
     """Exibe e permite filtrar as tabelas candidatos, bens e rede sociais."""
     if base_escolhida == 'Candidatos':
         dataframe = dados_candidatos.copy()
-        filtros_disponiveis = ['Município', 'Estado', 'Cargo','Partido','Raça/Cor', 'Gênero. Grau de Instrução']
+        filtros_disponiveis = ['Município', 'Estado', 'Cargo','Partido','Raça/Cor', 'Gênero']
     elif base_escolhida == 'Bens':
         dataframe = dados_bens.copy()
         filtros_disponiveis = ['Município', 'Estado', 'Tipo do Bem']  
@@ -89,11 +89,6 @@ def exibir_tabelas(base_escolhida):
         genero = dataframe['DS_GENERO'].dropna().unique()
         genero_selecionado = st.selectbox('Selecione o Gênero', sorted(genero))
         dataframe = dataframe[dataframe['DS_GENERO'] == genero_selecionado]
-
-    if' Grau de Instrução' in filtro_opcoes:
-        grau = dataframe['DS_GRAU_INSTRUCAO '].dropna().unique()
-        grau_selecionado = st.selectbox('Selecione o Tipo de Grau', sorted(grau))
-        dataframe = dataframe[dataframe['DS_GRAU_INSTRUCAO '] == grau_selecionado]
 
     if 'Tipo do Bem' in filtro_opcoes:
         bem = dataframe['DS_TIPO_BEM_CANDIDATO'].dropna().unique()
@@ -146,13 +141,8 @@ def grafico_candidatos(filtro_tipo, filtro_valor):
         titulo = f'Candidatos por Partido - {filtro_valor}'
         max_slider = 35
         usar_slider = True
-    elif filtro_tipo == 'Grau de Instrução':
-        dataframe = dados_candidatos.groupby('DS_GRAU_INSTRUCAO')['SQ_CANDIDATO'].nunique().reset_index()
-        eixo_x = 'DS_GRAU_INSTRUCAO'
-        titulo = f'Candidatos por Grau de Instrução - {filtro_valor}'
-        usar_slider = False
     else:
-        st.error("Filtro inválido. Escolha entre 'Estados', 'Raça/Cor' ou 'Partido' ou 'Grau de Instrução'.")
+        st.error("Filtro inválido. Escolha entre 'Estados', 'Raça/Cor' ou 'Partido'.")
         return
 
     # Renomear a coluna para facilitar a manipulação
@@ -184,29 +174,29 @@ def grafico_candidatos(filtro_tipo, filtro_valor):
     st.pyplot(plt)
 
 
-def grafico_genero():
-    """Gera um gráfico com a quantidade de candidatos por Gênero."""
-    # Agrupamento por Gênero
-    dataframe = dados_candidatos.groupby('DS_GENERO')['SQ_CANDIDATO'].nunique().reset_index()
-    
-    # Renomear a coluna para facilitar a manipulação
+    """Gera um gráfico comparando os gêneros dos candidatos por estado."""
+    # Filtrar e organizar os dados
+    dataframe = dados_candidatos.groupby(['SG_UF', 'DS_GENERO'])['SQ_CANDIDATO'].nunique().reset_index()
     dataframe = dataframe.rename(columns={'SQ_CANDIDATO': 'quantidade'})
+
+    # Criar um gráfico de barras agrupadas
+    plt.figure(figsize=(14, 7))
+    sns.barplot(
+        data=dataframe, 
+        x='SG_UF', 
+        y='quantidade', 
+        hue='DS_GENERO', 
+        palette='Set2'
+    )
     
-    # Ordenar os dados pelo número de candidatos
-    dataframe = dataframe.sort_values(by='quantidade', ascending=False)
-    
-    # Título do gráfico
-    titulo = 'Candidatos por Gênero'
-    
-    # Gerar o gráfico
-    plt.figure(figsize=(12, 6))
-    sns.barplot(data=dataframe, x='DS_GENERO', y='quantidade', palette='coolwarm')
+    # Configuração do gráfico
     plt.xticks(rotation=45, ha='right')
-    plt.xlabel('Gênero')
+    plt.xlabel('Estados')
     plt.ylabel('Quantidade de Candidatos')
-    plt.title(titulo)
+    plt.title('Comparação de Gêneros dos Candidatos por Estado')
+    plt.legend(title='Gênero')
     plt.tight_layout()
-    
+
     # Renderizar no Streamlit
     st.pyplot(plt)
 
@@ -243,7 +233,7 @@ def gerar_grafico_pizza(dados, estado=None, municipio= None):
     st.pyplot(fig)
 # Título da página
 st.title('Trabalho Pratico: Introducação a Banco de Dados - Candidatos-2024 ')
-st.write('Atividade Extra do Trabalho Pratico')
+st.write('PLACEHOLDER.')
 
 
 
@@ -262,48 +252,29 @@ tipo_analise = st.sidebar.radio('Escolha o tipo de análise:', ['Candidatos'])
 
 if tipo_analise == 'Candidatos':
     # Filtro para candidatos
-    filtro_tipo = st.sidebar.radio('Filtrar por:', ['Estados', 'Raça/Cor', 'Partido', 'Grau de Instrução'])
+    filtro_tipo = st.sidebar.radio('Filtrar por:', ['Estados', 'Raça/Cor', 'Partido'])
     filtro_valor = 'Brasil'  # Para indicar uma visão geral nacional
 
-    # Gráfico de candidatos
     if st.sidebar.checkbox('Mostrar gráfico de candidatos'):
         grafico_candidatos(filtro_tipo, filtro_valor)
-    
-    # Análise da distribuição de gêneros
-    st.sidebar.header('Análise da distribuição de gêneros')
+    st.sidebar.header('Análise da distribuição de generos')
 
-    if st.sidebar.checkbox('Mostrar gráfico de gêneros'):
-        # Seleção de filtros para município e estado
+    if st.sidebar.checkbox('Mostrar gráfico de generos'):
         municipio = st.sidebar.selectbox(
-            'Selecione o município:', 
-            options=['Todos'] + list(dados_candidatos['NM_UE'].dropna().unique())
+            'Selecione o municipio:', 
+            options=['Todas'] + list(dados_candidatos['NM_UE'].dropna().unique())
         )
         estado = st.sidebar.selectbox(
             'Selecione o estado:', 
             options=['Todos'] + list(dados_candidatos['SG_UF'].dropna().unique())
         )
 
-        # Filtrar os dados com base nos filtros escolhidos
-        municipio_selecionado = None if municipio == 'Todos' else municipio
+        municipio_selecionado = None if municipio == 'Todas' else municipio
         estado_selecionado = None if estado == 'Todos' else estado
 
-        if municipio_selecionado or estado_selecionado:
-            # Filtrar o DataFrame com base no município e/ou estado
-            dados_filtrados = dados_candidatos.copy()
-            if municipio_selecionado:
-                dados_filtrados = dados_filtrados[dados_filtrados['NM_UE'] == municipio_selecionado]
-            if estado_selecionado:
-                dados_filtrados = dados_filtrados[dados_filtrados['SG_UF'] == estado_selecionado]
-        else:
-            dados_filtrados = dados_candidatos  # Todos os dados, sem filtro
-
-        # Gerar gráfico de gêneros
-        if not dados_filtrados.empty:
-            st.subheader('Distribuição de Gêneros')
-            grafico_genero()  # Chama a função `grafico_genero`
-        else:
-            st.warning('Não há dados disponíveis para os filtros selecionados.')
-
+        # Gerar o gráfico de pizza para a base "Candidatos"
+        gerar_grafico_pizza(dados_candidatos, municipio=municipio_selecionado, estado=estado_selecionado)
 
 
     
+
