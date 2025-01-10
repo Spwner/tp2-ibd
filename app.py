@@ -91,9 +91,9 @@ def exibir_tabelas(base_escolhida):
         dataframe = dataframe[dataframe['DS_GENERO'] == genero_selecionado]
 
     if' Grau de Instrução' in filtro_opcoes:
-        grau = dataframe['DS_GRAU_INSTRUCAO '].dropna().unique()
+        grau = dataframe['DS_GRAU_INSTRUCAO'].dropna().unique()
         grau_selecionado = st.selectbox('Selecione o Tipo de Grau', sorted(grau))
-        dataframe = dataframe[dataframe['DS_GRAU_INSTRUCAO '] == grau_selecionado]
+        dataframe = dataframe[dataframe['DS_GRAU_INSTRUCAO'] == grau_selecionado]
 
     if 'Tipo do Bem' in filtro_opcoes:
         bem = dataframe['DS_TIPO_BEM_CANDIDATO'].dropna().unique()
